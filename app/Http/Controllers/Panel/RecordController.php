@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Panel;
 
 use App\Http\Controllers\Controller;
+use App\Models\Project;
 use App\Models\Record;
 use Illuminate\Http\Request;
 
@@ -11,25 +12,39 @@ class RecordController extends Controller
     // Exibir histórico de registros de ponto
     public function index()
     {
-        $record = Record::with('user_id')->orderBy('entry_time', 'desc')->get();
-        // dd($record);
+        // Carregar registros de ponto com os usuários relacionados
+        $record = Record::with('user')->orderBy('entry_time', 'desc')->get();
+
+        // Retornar a view com os registros carregados
         return view('layouts.record.record_index', compact('record'));
+    }
+    public function create()
+    {
+        $record = Record::all();
+        $projects = Project::all();
+        return view('layouts.record.record_add', compact('record', 'projects'));
     }
 
     public function store(Request $request)
     {
-
+        // dd($request->user_id);
 
         $request->validate([
             'date' => 'required|date_format:Y-m-d',
-            'punched_in_at' => 'required|date_format:H:i',
-            'punched_out_at' => 'nullable|date_format:H:i|after:punched_in_at',
+            'entry_time' => 'required|date_format:H:i',
+            'departure_time' => 'nullable|date_format:H:i|after:punched_in_at',
             'project1_name' => 'nullable|string',
             'project1_hours' => 'nullable|date_format:H:i',
             'project2_name' => 'nullable|string',
             'project2_hours' => 'nullable|date_format:H:i',
             'project3_name' => 'nullable|string',
             'project3_hours' => 'nullable|date_format:H:i',
+            'project4_name' => 'nullable|string',
+            'project4_hours' => 'nullable|date_format:H:i',
+            'project5_name' => 'nullable|string',
+            'project5_hours' => 'nullable|date_format:H:i',
+            'project6_name' => 'nullable|string',
+            'project6_hours' => 'nullable|date_format:H:i',
         ]);
 
 
@@ -38,8 +53,8 @@ class RecordController extends Controller
         Record::create([
             'user_id' => $request->user_id,
             'date' => $request->date,
-            'punched_in_at' => $request->punched_in_at,
-            'punched_out_at' => $request->punched_out_at,
+            'entry_time' => $request->entry_time,
+            'departure_time' => $request->departure_time,
             'total_hours' => $request->total_hours,
             'project1_name' => $request->project1_name,
             'project1_hours' => $request->project1_hours,
@@ -47,22 +62,27 @@ class RecordController extends Controller
             'project2_hours' => $request->project2_hours,
             'project3_name' => $request->project3_name,
             'project3_hours' => $request->project3_hours,
+            'project4_name' => $request->project4_name,
+            'project4_hours' => $request->project4_hours,
+            'project5_name' => $request->project5_name,
+            'project5_hours' => $request->project5_hours,
+            'project6_name' => $request->project6_name,
+            'project6_hours' => $request->project6_hours,
         ]);
-
-        // Outras ações após salvar, como redirecionamento ou mensagem de sucesso
-        return redirect()->route('dashboard')->with('success', 'Horario adicionado com sucesso!');
+        // dd($request);
+        // Redirecionar para a rota index com mensagem de sucesso
+        return redirect()->route('record.index')->with('success', 'Horário adicionado com sucesso!');
     }
 
     // PunchController.php
 
     public function edit($id)
     {
-        $punchSolo = Record::findOrFail($id);
-        // $employees = Employee::all();
-        // $projects = Project::all();
+        $record = Record::findOrFail($id);
+        $projects = Project::all();
 
         // dd($punchSolo);
-        return view('partials.edit_punches', compact('punchSolo', 'employees', 'projects'));
+        return view('layouts.record.record_edit', compact('record',  'projects'));
     }
 
     public function update(Request $request, $id)
@@ -73,13 +93,12 @@ class RecordController extends Controller
 
         //dd($punch);
 
-        return redirect()->route('punches.show', ['punch' => $punch->id])->with('success', 'Registro atualizado com sucesso!');
-
+        return redirect()->route('record.show', ['punch' => $punch->id])->with('success', 'Registro atualizado com sucesso!');
     }
 
     public function show($id)
     {
         $punch = Record::findOrFail($id);
-        return view('partials.show_punches', compact('punch'));
+        return view('layouts.record.record_show', compact('punch'));
     }
 }

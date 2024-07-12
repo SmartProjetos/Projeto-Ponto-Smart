@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->date('date')->nullable();
-            $table->timestamp('entry_time')->nullable();
-            $table->timestamp('departure_time')->nullable();
+            $table->time('entry_time')->nullable();
+            $table->time('departure_time')->nullable();
             $table->time('total_hours')->nullable();
             $table->time('project1_hours')->nullable();
             $table->string('project1_name')->nullable();

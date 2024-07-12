@@ -28,6 +28,7 @@ Route::prefix('dashboard')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->middleware(CheckRole::class)->name('dashboard.index');
     Route::get('/record', [RecordController::class, 'index'])->name('record.index');
     Route::post('/record', [RecordController::class, 'store'])->name('record.store');
+    Route::get('/record/add', [RecordController::class, 'create'])->name('record.add');
     Route::get('/record/{punch}', [RecordController::class, 'show'])->name('record.show');
     Route::get('/record/{punch}/edit', [RecordController::class, 'edit'])->name('record.edit');
     Route::put('/record/{punch}', [RecordController::class, 'update'])->name('record.update');
