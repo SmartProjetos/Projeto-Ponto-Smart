@@ -210,5 +210,20 @@
             $('#entry_time, #departure_time').on('input', calculateTotalHours);
         });
     </script>
+    <script>
+        flatpickr("#date", {
+            dateFormat: "d/m/Y",
+        });
+        flatpickr("#entry_time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+        });
+        flatpickr("#departure_time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+        });
+    </script>
 
 </x-app-layout>

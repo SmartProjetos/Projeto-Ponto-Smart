@@ -12,12 +12,13 @@ class RecordController extends Controller
     // Exibir histórico de registros de ponto
     public function index()
     {
-        // Carregar registros de ponto com os usuários relacionados
-        $record = Record::with('user')->orderBy('entry_time', 'desc')->get();
+        $user = auth()->user();
+        $records = Record::where('user_id', $user->id)->orderBy('date', 'desc')->get();
 
-        // Retornar a view com os registros carregados
-        return view('layouts.record.record_index', compact('record'));
+        return view('layouts.record.record_index', compact('records', 'user'));
     }
+
+
     public function create()
     {
         $record = Record::all();
@@ -100,5 +101,17 @@ class RecordController extends Controller
     {
         $punch = Record::findOrFail($id);
         return view('layouts.record.record_show', compact('punch'));
+    }
+
+    public function destroy($id)
+    {
+        $record = Record::find($id);
+        // dd($record);
+        if ($record) {
+            $record->delete();
+            return redirect()->route('record.index')->with('success', 'Registro de ponto excluído com sucesso!');
+        } else {
+            return redirect()->route('record.index')->with('error', 'Registro de ponto não encontrado.');
+        }
     }
 }
