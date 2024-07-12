@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Panel;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\Record;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class RecordController extends Controller
@@ -14,8 +15,10 @@ class RecordController extends Controller
     {
         $user = auth()->user();
         $records = Record::where('user_id', $user->id)->orderBy('date', 'desc')->get();
-
-        return view('layouts.record.record_index', compact('records', 'user'));
+        $groupedRecords = $records->groupBy(function ($item) {
+            return Carbon::parse($item->date)->format('d/m/Y');
+        });
+        return view('layouts.record.record_index', compact('records', 'user', 'groupedRecords'));
     }
 
 
