@@ -1,15 +1,41 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\Panel\RecordController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\CheckRole;
+use App\Services\UserService;
 use Illuminate\Support\Facades\Route;
 
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+
+// Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
+
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('dashboard');
+});
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/', function () {
+
+        return app(UserService::class)->redirectRole(auth()->user());
+    })->name('dashboard');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::prefix('dashboard')->group(function () {
+    Route::get('/', [DashboardController::class, 'index'])->middleware(CheckRole::class)->name('dashboard.index');
+    Route::get('/record', [RecordController::class, 'index'])->name('record.index');
+    Route::post('/record', [RecordController::class, 'store'])->name('record.store');
+    Route::get('/record/{punch}', [RecordController::class, 'show'])->name('record.show');
+    Route::get('/record/{punch}/edit', [RecordController::class, 'edit'])->name('record.edit');
+    Route::put('/record/{punch}', [RecordController::class, 'update'])->name('record.update');
+});
+
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified', 'master'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -17,4 +43,4 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
