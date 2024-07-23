@@ -37,7 +37,7 @@
             <div class="p-6 text-gray-900 dark:text-gray-100">
                 @foreach ($record->groupBy('user_id') as $userId => $userRecords)
                     <h2 class="text-2xl font-semibold text-gray-800 dark:text-gray-100 mb-4">
-                        {{ $userRecords->first()->user->name }}</h2>
+                        {{ $userRecords->first()->user->username }}</h2>
                     <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 mb-8">
                         <thead>
                             <tr>

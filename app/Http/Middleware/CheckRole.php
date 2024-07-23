@@ -30,6 +30,10 @@ class CheckRole
                 return $next($request);
             }
 
+            if ($user->role === 'administrativo') {
+                return $next($request);
+            }
+
             return redirect()->route('record.index');
         }
 

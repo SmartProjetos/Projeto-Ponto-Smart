@@ -25,6 +25,10 @@ class UserService
             return redirect()->route('dashboard.index');
         }
 
+        if ($user->role === 'administrativo') {
+            return redirect()->route('dashboard.index');
+        }
+
         return redirect()->route('record.index');
         // Personalize conforme necessário se nenhum redirecionamento for possível
         return redirect()->route('login');
