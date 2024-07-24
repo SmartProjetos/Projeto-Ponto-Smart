@@ -1,10 +1,18 @@
 <x-app-layout>
 
     @if (session('success'))
-        <div class="bg-green-500 text-white p-4 rounded mb-4">
-            {{ session('success') }}
-        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Sucesso',
+                    text: '{{ session('success') }}',
+                    confirmButtonText: 'OK'
+                });
+            });
+        </script>
     @endif
+
 
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
@@ -37,7 +45,11 @@
                                 <span class="font-bold">Hora de Saída:</span>
                             </div>
                             <div>
-                                {{ \Carbon\Carbon::parse($punch->departure_time)->format('H:i') }}
+                                @if (isset($punch->departure_time) && !empty($punch->departure_time))
+                                    {{ \Carbon\Carbon::parse($punch->departure_time)->format('H:i') }}
+                                @else
+                                    --:--
+                                @endif
                             </div>
 
                             <div>
@@ -48,57 +60,63 @@
                             </div>
 
                             @if ($punch->project1_name && $punch->project1_hours)
-                            <div>
-                                <span class="font-bold">Projeto 1:</span>
-                            </div>
-                            <div>
-                                {{ $punch->project1_name }} - {{ \Carbon\Carbon::parse($punch->project1_hours)->format('H:i') }} Hr
-                            </div>
+                                <div>
+                                    <span class="font-bold">Projeto 1:</span>
+                                </div>
+                                <div>
+                                    {{ $punch->project1_name }} -
+                                    {{ \Carbon\Carbon::parse($punch->project1_hours)->format('H:i') }} Hr
+                                </div>
                             @endif
 
                             @if ($punch->project2_name && $punch->project2_hours)
-                            <div>
-                                <span class="font-bold">Projeto 2:</span>
-                            </div>
-                            <div>
-                                {{ $punch->project2_name }} - {{ \Carbon\Carbon::parse($punch->project2_hours)->format('H:i') }} Hr
-                            </div>
+                                <div>
+                                    <span class="font-bold">Projeto 2:</span>
+                                </div>
+                                <div>
+                                    {{ $punch->project2_name }} -
+                                    {{ \Carbon\Carbon::parse($punch->project2_hours)->format('H:i') }} Hr
+                                </div>
                             @endif
 
                             @if ($punch->project3_name && $punch->project3_hours)
-                            <div>
-                                <span class="font-bold">Projeto 3:</span>
-                            </div>
-                            <div>
-                                {{ $punch->project3_name }} - {{ \Carbon\Carbon::parse($punch->project3_hours)->format('H:i') }} Hr
-                            </div>
+                                <div>
+                                    <span class="font-bold">Projeto 3:</span>
+                                </div>
+                                <div>
+                                    {{ $punch->project3_name }} -
+                                    {{ \Carbon\Carbon::parse($punch->project3_hours)->format('H:i') }} Hr
+                                </div>
                             @endif
 
                             @if ($punch->project4_name && $punch->project4_hours)
-                            <div>
-                                <span class="font-bold">Projeto 4:</span>
-                            </div>
-                            <div>
-                                {{ $punch->project4_name }} - {{ \Carbon\Carbon::parse($punch->project4_hours)->format('H:i') }} Hr
-                            </div>
+                                <div>
+                                    <span class="font-bold">Projeto 4:</span>
+                                </div>
+                                <div>
+                                    {{ $punch->project4_name }} -
+                                    {{ \Carbon\Carbon::parse($punch->project4_hours)->format('H:i') }} Hr
+                                </div>
                             @endif
 
                             @if ($punch->project5_name && $punch->project5_hours)
-                            <div>
-                                <span class="font-bold">Projeto 5:</span>
-                            </div>
-                            <div>
-                                {{ $punch->project5_name }} - {{ \Carbon\Carbon::parse($punch->project5_hours)->format('H:i') }} Hr
-                            </div>
+                                <div>
+                                    <span class="font-bold">Projeto 5:</span>
+                                </div>
+                                <div>
+                                    {{ $punch->project5_name }} -
+                                    {{ \Carbon\Carbon::parse($punch->project5_hours)->format('H:i') }} Hr
+                                </div>
                             @endif
 
                             @if ($punch->project6_name && $punch->project6_hours)
-                            <div>
-                                <span class="font-bold">Projeto 6:</span>
-                            </div>
-                            <div>
-                                {{ $punch->project6_name }} - {{ \Carbon\Carbon::parse($punch->project6_hours)->format('H:i') }} Hr
-                            </div>
+                                <div>
+                                    <span class="font-bold">Projeto 6:</span>
+                                </div>
+                                <div>
+                                    {{ $punch->project6_name }} -
+                                    {{ \Carbon\Carbon::parse($punch->project6_hours)->format('H:i') }} Hr
+                                </div>
                             @endif
                         </div>
                     </div>
@@ -124,13 +142,10 @@
                             Editar
                         </a>
                         <a href="{{ route('record.destroy', $punch->id) }}"
-                            onclick="return confirm('Tem certeza que deseja excluir este registro?')"
-                            class="inline-flex items-center px-4 py-2 bg-red-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
+                            onclick="event.preventDefault(); confirmDelete('{{ route('record.destroy', $punch->id) }}');"
+                            class="inline-flex items-center px-4 py-2 bg-red-500 dark:bg-red-700 border border-transparent rounded-md
+                                   font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none
+                                   focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
                             Excluir
                         </a>
                     </div>
@@ -139,4 +154,22 @@
         </div>
     </div>
 
+    <script>
+        function confirmDelete(url) {
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: "Você não poderá reverter isso!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = url;
+                }
+            });
+        }
+    </script>
 </x-app-layout>
