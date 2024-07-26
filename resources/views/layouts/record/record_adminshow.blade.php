@@ -1,25 +1,9 @@
 <x-app-layout>
-
-    @if (session('success'))
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Sucesso',
-                    text: '{{ session('success') }}',
-                    confirmButtonText: 'OK'
-                });
-            });
-        </script>
-    @endif
-
-
     <x-slot name="header">
         <h2 class="font-semibold text-xl leading-tight text-center text-gray-800 dark:text-gray-200">
             Detalhes do Registro de Ponto
         </h2>
     </x-slot>
-
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -34,14 +18,12 @@
                             <div>
                                 {{ \Carbon\Carbon::parse($punch->date)->format('d/m/Y') }}
                             </div>
-
                             <div>
                                 <span class="font-bold">Hora de Entrada:</span>
                             </div>
                             <div>
                                 {{ \Carbon\Carbon::parse($punch->entry_time)->format('H:i') }}
                             </div>
-
                             <div>
                                 <span class="font-bold">Hora de Saída:</span>
                             </div>
@@ -52,14 +34,12 @@
                                     --:--
                                 @endif
                             </div>
-
                             <div>
                                 <span class="font-bold">Total de Horas:</span>
                             </div>
                             <div>
                                 {{ $punch->total_hours }}
                             </div>
-
                             @if ($punch->project1_name && $punch->project1_hours)
                                 <div>
                                     <span class="font-bold">Projeto 1:</span>
@@ -69,7 +49,6 @@
                                     {{ \Carbon\Carbon::parse($punch->project1_hours)->format('H:i') }} Hr
                                 </div>
                             @endif
-
                             @if ($punch->project2_name && $punch->project2_hours)
                                 <div>
                                     <span class="font-bold">Projeto 2:</span>
@@ -79,7 +58,6 @@
                                     {{ \Carbon\Carbon::parse($punch->project2_hours)->format('H:i') }} Hr
                                 </div>
                             @endif
-
                             @if ($punch->project3_name && $punch->project3_hours)
                                 <div>
                                     <span class="font-bold">Projeto 3:</span>
@@ -89,7 +67,6 @@
                                     {{ \Carbon\Carbon::parse($punch->project3_hours)->format('H:i') }} Hr
                                 </div>
                             @endif
-
                             @if ($punch->project4_name && $punch->project4_hours)
                                 <div>
                                     <span class="font-bold">Projeto 4:</span>
@@ -99,7 +76,6 @@
                                     {{ \Carbon\Carbon::parse($punch->project4_hours)->format('H:i') }} Hr
                                 </div>
                             @endif
-
                             @if ($punch->project5_name && $punch->project5_hours)
                                 <div>
                                     <span class="font-bold">Projeto 5:</span>
@@ -109,7 +85,6 @@
                                     {{ \Carbon\Carbon::parse($punch->project5_hours)->format('H:i') }} Hr
                                 </div>
                             @endif
-
                             @if ($punch->project6_name && $punch->project6_hours)
                                 <div>
                                     <span class="font-bold">Projeto 6:</span>
@@ -124,7 +99,7 @@
                     <!-- Linha decorativa -->
                     <div class="border-t border-gray-300 my-4"></div>
                     <div class="mt-6 flex justify-end">
-                        <a href="{{ route('record.index') }}"
+                        <a href="{{ route('user.index', $user_id->id) }}"
                             class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150 mr-2">
                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
                                 xmlns="http://www.w3.org/2000/svg">
@@ -133,44 +108,10 @@
                             </svg>
                             Voltar
                         </a>
-                        <a href="{{ route('record.edit', $punch->id) }}"
-                            class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150 mr-2">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                                xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M12 4v16m8-8H4"></path>
-                            </svg>
-                            Editar
-                        </a>
-                        <a href="{{ route('record.destroy', $punch->id) }}"
-                            onclick="event.preventDefault(); confirmDelete('{{ route('record.destroy', $punch->id) }}');"
-                            class="inline-flex items-center px-4 py-2 bg-red-500 dark:bg-red-700 border border-transparent rounded-md
-                                   font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900 focus:outline-none
-                                   focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
-                            Excluir
-                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script>
-        function confirmDelete(url) {
-            Swal.fire({
-                title: 'Tem certeza?',
-                text: "Você não poderá reverter isso!",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#3085d6',
-                confirmButtonText: 'Sim, excluir!',
-                cancelButtonText: 'Cancelar'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    window.location.href = url;
-                }
-            });
-        }
-    </script>
 </x-app-layout>

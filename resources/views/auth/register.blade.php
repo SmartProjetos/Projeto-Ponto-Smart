@@ -1,5 +1,5 @@
 <meta http-equiv=”refresh” content=”0; URL="{{view('auth.login')}}"/>
-{{-- 
+{{--
 <x-guest-layout>
     <form method="POST" action="{{ route('register') }}">
         @csrf

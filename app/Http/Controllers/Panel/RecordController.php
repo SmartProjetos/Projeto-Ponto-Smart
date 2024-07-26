@@ -11,10 +11,41 @@ use Illuminate\Http\Request;
 class RecordController extends Controller
 {
     // Exibir histórico de registros de ponto
-    public function index()
+    public function index(Request $request)
     {
         $user = auth()->user();
-        $records = Record::where('user_id', $user->id)->orderBy('date', 'desc')->get();
+        // $records = Record::where('user_id', $user->id)->orderBy('date', 'desc')->get();
+
+        // Pegando o valor do filtro do request
+        $filter = $request->input('filter', '30d'); // Default to '30d' if not provided
+
+        // Definindo a data de início com base no filtro selecionado
+        $startDate = Carbon::now()->subDays(30); // Default to last 30 days
+
+        switch ($filter) {
+            case '1d':
+                $startDate = Carbon::now()->subDay();
+                break;
+            case '7d':
+                $startDate = Carbon::now()->subDays(7);
+                break;
+            case '30d':
+                $startDate = Carbon::now()->subDays(30);
+                break;
+            case '1m':
+                $startDate = Carbon::now()->subMonth();
+                break;
+            case '1y':
+                $startDate = Carbon::now()->subYear();
+                break;
+        }
+
+        // Consultando os registros com base no filtro
+        $records = Record::where('user_id', $user->id)
+            ->where('date', '>=', $startDate)
+            ->orderBy('date', 'desc')
+            ->get();
+            
         $groupedRecords = $records->groupBy(function ($item) {
             return Carbon::parse($item->date)->format('d/m/Y');
         });
