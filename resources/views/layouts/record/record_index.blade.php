@@ -28,10 +28,12 @@
     <div class="container mx-auto py-8">
         <h1 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-8">
             Histórico de Registro de Pontos de {{ auth()->user()->name }}
+            <span class="block mt-2 text-lg">Quantidade de Horas da Semana {{ $hoursPerWeek }}</span>
         </h1>
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-            <div class="p-6 overflow-x-auto">
-                <div class="relative ">
+            <div class="p-3 overflow-x-auto">
+                <div class="relative">
+                    <!-- Dropdown Button -->
                     <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio"
                         class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
                         type="button">
@@ -47,60 +49,30 @@
                                 d="m1 1 4 4 4-4" />
                         </svg>
                     </button>
-                    <!-- Dropdown menu -->
+
+                    <!-- Dropdown Menu -->
                     <div id="dropdownRadio"
                         class="z-50 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-full left-0 mt-2">
                         <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
                             aria-labelledby="dropdownRadioButton">
-                            <li>
-                                <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    <input id="filter-radio-example-1" type="radio" value="1d" name="filter-radio"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="filter-radio-example-1"
-                                        class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Último
-                                        dia</label>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    <input id="filter-radio-example-2" type="radio" value="7d" name="filter-radio"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="filter-radio-example-2"
-                                        class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Últimos
-                                        7 dias</label>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    <input id="filter-radio-example-3" type="radio" value="30d" name="filter-radio"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="filter-radio-example-3"
-                                        class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Últimos
-                                        30 dias</label>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    <input id="filter-radio-example-4" type="radio" value="1m" name="filter-radio"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="filter-radio-example-4"
-                                        class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Último
-                                        mês</label>
-                                </div>
-                            </li>
-                            <li>
-                                <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                    <input id="filter-radio-example-5" type="radio" value="1y" name="filter-radio"
-                                        class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                    <label for="filter-radio-example-5"
-                                        class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">Último
-                                        ano</label>
-                                </div>
-                            </li>
+                            @foreach ([['1d', 'Último dia'], ['7d', 'Últimos 7 dias'], ['30d', 'Últimos 30 dias'], ['1m', 'Último mês'], ['1y', 'Último ano']] as [$value, $label])
+                                <li>
+                                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
+                                        <input id="filter-radio-example-{{ $loop->index + 1 }}" type="radio"
+                                            value="{{ $value }}" name="filter-radio"
+                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                                        <label for="filter-radio-example-{{ $loop->index + 1 }}"
+                                            class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">
+                                            {{ $label }}
+                                        </label>
+                                    </div>
+                                </li>
+                            @endforeach
                         </ul>
                     </div>
                 </div>
 
+                <!-- Table -->
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 mt-6">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                         <tr>
@@ -114,7 +86,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                 </svg>
-                                <span class="inline">Entrada</span>
+                                Entrada
                             </th>
                             <th
                                 class="px-6 py-3 text-center text-xs font-bold uppercase text-gray-500 dark:text-gray-200">
@@ -123,7 +95,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                 </svg>
-                                <span class="inline">Saida</span>
+                                Saida
                             </th>
                             <th
                                 class="px-6 py-3 text-center text-xs font-bold uppercase text-gray-500 dark:text-gray-200">
@@ -132,7 +104,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
                                 </svg>
-                                <span class="inline">Total de Horas</span>
+                                Total de Horas
                             </th>
                             <th
                                 class="px-6 py-3 text-center text-xs font-bold uppercase text-gray-500 dark:text-gray-200">
@@ -141,7 +113,7 @@
                                     <path stroke-linecap="round" stroke-linejoin="round"
                                         d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" />
                                 </svg>
-                                <span class="inline">Ações</span>
+                                Ações
                             </th>
                         </tr>
                     </thead>
@@ -155,7 +127,7 @@
                             </tr>
                             @foreach ($records as $punch)
                                 <tr onclick="window.location.href='{{ route('record.show', $punch->id) }}'"
-                                    class="cursor-pointer">
+                                    class="cursor-pointer  hover:bg-gray-50 dark:hover:bg-gray-600">
                                     <td class="px-6 py-4 text-sm w-1/4 text-gray-500 dark:text-gray-200 text-center">
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-200 text-center">
@@ -171,8 +143,8 @@
                                         <a href="{{ route('record.destroy', $punch->id) }}"
                                             onclick="event.preventDefault(); deleteRecord(this);"
                                             class="inline-flex items-center px-4 py-2 bg-red-500 dark:bg-red-700 border border-transparent rounded-md
-                                              font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900
-                                              focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                    font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 active:bg-red-900
+                                    focus:outline-none focus:border-red-900 focus:ring ring-red-300 disabled:opacity-25 transition ease-in-out duration-150">
                                             Excluir
                                         </a>
                                     </td>
@@ -183,6 +155,8 @@
                 </table>
             </div>
         </div>
+
+
     </div>
     <script>
         function deleteRecord(element) {
@@ -217,7 +191,7 @@
                 var filterValue = $(this).val();
                 var url = new URL(window.location.href);
                 url.searchParams.set('filter', filterValue);
-                window.location.href = url.toString();
+                window.location.href = url.toString(); // Redireciona com o novo parâmetro de filtro
             });
 
             // Hide dropdown when clicking outside of it
@@ -225,7 +199,9 @@
                 var dropdown = $('#dropdownRadio');
                 var button = $('#dropdownRadioButton');
 
-                if (!dropdown.is(e.target) && dropdown.has(e.target).length === 0 && !button.is(e.target)) {
+                // Verifica se o clique foi fora do dropdown e do botão
+                if (!button.is(e.target) && button.has(e.target).length === 0 && !dropdown.is(e.target) &&
+                    dropdown.has(e.target).length === 0) {
                     dropdown.addClass('hidden');
                 }
             });

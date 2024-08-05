@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Controllers\Panel\ControllerHoursPerWeek;
 use App\Models\Record;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -19,9 +20,11 @@ class DashboardController extends Controller
         // $variables = [
         //     'etas' => $etas
         // ];
-
-        // dd($users);
-
-        return view('dashboard', compact('users','record'));
+        $hoursPerWeekByUser = [];
+        foreach ($users as $user) {
+            $hoursPerWeekByUser[$user->name] = ControllerHoursPerWeek::getHoursPerWeekByUser($user->id);
+        }
+        // dd($hoursPerWeekByUser);
+        return view('dashboard', compact('users', 'record', 'hoursPerWeekByUser'));
     }
 }

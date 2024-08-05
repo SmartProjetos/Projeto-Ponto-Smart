@@ -68,8 +68,9 @@ class RecordAdminController extends Controller
         $groupedRecords = $records->groupBy(function ($item) {
             return Carbon::parse($item->date)->format('d/m/Y');
         });
-
-        return view('layouts.record.record_admin', compact('records', 'user', 'groupedRecords'));
+        $hoursPerWeek = ControllerHoursPerWeek::getHoursPerWeekByUser($id);
+        // dd($hoursPerWeek);
+        return view('layouts.record.record_admin', compact('records', 'user', 'groupedRecords', 'hoursPerWeek'));
     }
 
 
@@ -84,5 +85,5 @@ class RecordAdminController extends Controller
         return view('layouts.record.record_adminshow', compact('punch', 'user_id'));
     }
 
-    
+
 }

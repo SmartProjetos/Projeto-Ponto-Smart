@@ -14,7 +14,6 @@ class RecordController extends Controller
     public function index(Request $request)
     {
         $user = auth()->user();
-        // $records = Record::where('user_id', $user->id)->orderBy('date', 'desc')->get();
 
         // Pegando o valor do filtro do request
         $filter = $request->input('filter', '30d'); // Default to '30d' if not provided
@@ -24,33 +23,39 @@ class RecordController extends Controller
 
         switch ($filter) {
             case '1d':
-                $startDate = Carbon::now()->subDay();
+                $startDate = Carbon::now()->startOfDay();
                 break;
             case '7d':
-                $startDate = Carbon::now()->subDays(7);
+                $startDate = Carbon::now()->subDays(7)->startOfDay();
                 break;
             case '30d':
-                $startDate = Carbon::now()->subDays(30);
+                $startDate = Carbon::now()->subDays(30)->startOfDay();
                 break;
             case '1m':
-                $startDate = Carbon::now()->subMonth();
+                $startDate = Carbon::now()->subMonth()->startOfDay();
                 break;
             case '1y':
-                $startDate = Carbon::now()->subYear();
+                $startDate = Carbon::now()->subYear()->startOfDay();
                 break;
         }
 
         // Consultando os registros com base no filtro
         $records = Record::where('user_id', $user->id)
-            ->where('date', '>=', $startDate)
+            ->whereDate('date', '>=', $startDate) // Use `whereDate` to compare only the date part
             ->orderBy('date', 'desc')
             ->get();
-            
+
+        // Agrupando os registros por data
         $groupedRecords = $records->groupBy(function ($item) {
             return Carbon::parse($item->date)->format('d/m/Y');
         });
-        return view('layouts.record.record_index', compact('records', 'user', 'groupedRecords'));
+        //dd($groupedRecords);
+
+        $hoursPerWeek = ControllerHoursPerWeek::getHoursPerWeekByUser($user->id);
+
+        return view('layouts.record.record_index', compact('records', 'user', 'groupedRecords', 'hoursPerWeek'));
     }
+
 
 
     public function create()
