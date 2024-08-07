@@ -17,9 +17,14 @@ class ControllerHoursPerWeek extends Controller
 
         $totalSeconds = 0;
         foreach ($records as $record) {
-            $entryTime = Carbon::createFromFormat('H:i:s', $record->entry_time);
-            $departureTime = Carbon::createFromFormat('H:i:s', $record->departure_time);
-            $totalSeconds += $entryTime->diffInSeconds($departureTime);
+            if (!empty($record->departure_time)) {
+                $entryTime = Carbon::createFromFormat('H:i:s', $record->entry_time);
+                $departureTime = Carbon::createFromFormat('H:i:s', $record->departure_time);
+                $totalSeconds += $entryTime->diffInSeconds($departureTime);
+            }
+            // $entryTime = Carbon::createFromFormat('H:i:s', $record->entry_time);
+            // $departureTime = Carbon::createFromFormat('H:i:s', $record->departure_time);
+            // $totalSeconds += $entryTime->diffInSeconds($departureTime);
         }
 
         $totalHours = floor($totalSeconds / 3600);

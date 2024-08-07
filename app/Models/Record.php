@@ -27,6 +27,12 @@ class Record extends Model
         'project5_hours',
         'project6_name',
         'project6_hours',
+        'textarea1',
+        'textarea2',
+        'textarea3',
+        'textarea4',
+        'textarea5',
+        'textarea6',
     ];
 
     public function user()

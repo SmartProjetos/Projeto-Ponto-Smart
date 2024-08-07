@@ -85,6 +85,12 @@ class RecordController extends Controller
             'project5_hours' => 'nullable|date_format:H:i',
             'project6_name' => 'nullable|string',
             'project6_hours' => 'nullable|date_format:H:i',
+            'textarea1' => 'nullable|string',
+            'textarea2' => 'nullable|string',
+            'textarea3' => 'nullable|string',
+            'textarea4' => 'nullable|string',
+            'textarea5' => 'nullable|string',
+            'textarea6' => 'nullable|string',
         ]);
 
 
@@ -108,7 +114,14 @@ class RecordController extends Controller
             'project5_hours' => $request->project5_hours,
             'project6_name' => $request->project6_name,
             'project6_hours' => $request->project6_hours,
+            'textarea1' => $request->textarea1,
+            'textarea2' => $request->textarea2,
+            'textarea3' => $request->textarea3,
+            'textarea4' => $request->textarea4,
+            'textarea5' => $request->textarea5,
+            'textarea6' => $request->textarea6,
         ]);
+
         // dd($request);
         // Redirecionar para a rota index com mensagem de sucesso
         return redirect()->route('record.index')->with('success', 'Horário adicionado com sucesso!');
@@ -121,7 +134,7 @@ class RecordController extends Controller
         $record = Record::findOrFail($id);
         $projects = Project::all();
 
-        // dd($punchSolo);
+        // dd($projects);
         return view('layouts.record.record_edit', compact('record',  'projects'));
     }
 

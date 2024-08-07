@@ -8,7 +8,6 @@
                         @csrf
                         @method('PUT')
 
-
                         <div class="mb-4">
                             <label for="date"
                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data:</label>
@@ -45,179 +44,65 @@
                         </div>
 
                         <div id="projects">
-                            <div id="projects-01" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project1_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        1:</label>
-                                    <select name="project1_name" id="project1_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}"
-                                                {{ $record->project1_name == $project->name ? 'selected' : '' }}>
-                                                {{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                            @for ($i = 1; $i <= 6; $i++)
+                                <div id="projects-0{{ $i }}"
+                                    class="{{ $record->{'project' . $i . '_name'} ? '' : 'hidden' }} mb-4">
+                                    <div class="mb-4">
+                                        <label for="project{{ $i }}_name"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
+                                            {{ $i }}:</label>
+                                        <select name="project{{ $i }}_name"
+                                            id="project{{ $i }}_name"
+                                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
+                                            <option value="">Selecione um Projeto</option>
+                                            @foreach ($projects as $project)
+                                                <option value="{{ $project->name }}"
+                                                    {{ $record->{'project' . $i . '_name'} == $project->name ? 'selected' : '' }}>
+                                                    {{ $project->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                                <div class="mb-4">
-                                    <label for="project1_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto
-                                        1:</label>
-                                    <input type="time" name="project1_hours" id="project1_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md"
-                                        value="{{ $record->project1_hours }}">
-                                </div>
-                            </div>
+                                    <div class="mb-4">
+                                        <label for="project{{ $i }}_hours"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
+                                            Projeto {{ $i }}:</label>
+                                        <input type="time" name="project{{ $i }}_hours"
+                                            id="project3_hours"
+                                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md"
+                                            value="{{ $record->{'project' . $i . '_hours'} }}">
+                                    </div>
 
-                            <div id="projects-02" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project2_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        2:</label>
-                                    <select name="project2_name" id="project2_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}"
-                                                {{ $record->project2_name == $project->name ? 'selected' : '' }}>
-                                                {{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
+                                    <div class="mb-4">
+                                        <label for="project{{ $i }}_description"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrição
+                                            do Projeto {{ $i }}:</label>
+                                        <textarea name="textarea{{ $i }}" id="textarea{{ $i }}"
+                                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md"
+                                            rows="3">{{ $record->{'textarea' . $i} }}</textarea>
+                                    </div>
                                 </div>
+                            @endfor
+                        </div>
 
-                                <div class="mb-4">
-                                    <label for="project2_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto
-                                        2:</label>
-                                    <input type="time" name="project2_hours" id="project2_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md"
-                                        value="{{ $record->project2_hours }}">
-                                </div>
-                            </div>
-
-                            <div id="projects-03" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project3_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        3:</label>
-                                    <select name="project3_name" id="project3_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}"
-                                                {{ $record->project3_name == $project->name ? 'selected' : '' }}>
-                                                {{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="project3_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto
-                                        3:</label>
-                                    <input type="time" name="project3_hours" id="project3_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md"
-                                        value="{{ $record->project3_hours }}">
-                                </div>
-                            </div>
-
-                            <div id="projects-04" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project4_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        3:</label>
-                                    <select name="project4_name" id="project4_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}"
-                                                {{ $record->project3_name == $project->name ? 'selected' : '' }}>
-                                                {{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="project4_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto
-                                        3:</label>
-                                    <input type="time" name="project4_hours" id="project4_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md"
-                                        value="{{ $record->project3_hours }}">
-                                </div>
-                            </div>
-
-                            <div id="projects-05" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project5_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        3:</label>
-                                    <select name="project5_name" id="project5_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}"
-                                                {{ $record->project3_name == $project->name ? 'selected' : '' }}>
-                                                {{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="project5_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto
-                                        3:</label>
-                                    <input type="time" name="project5_hours" id="project5_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md"
-                                        value="{{ $record->project3_hours }}">
-                                </div>
-                            </div>
-
-                            <div id="projects-06" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project6_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        3:</label>
-                                    <select name="project6_name" id="project6_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}"
-                                                {{ $record->project3_name == $project->name ? 'selected' : '' }}>
-                                                {{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="project6_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto
-                                        3:</label>
-                                    <input type="time" name="project6_hours" id="project6_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md"
-                                        value="{{ $record->project3_hours }}">
-                                </div>
-                            </div>
-
-                            <div class="mt-4">
-                                <a href="{{ route('record.show', ['punch' => $record->id]) }}"
-                                    class="inline-block bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md">
-                                    Voltar
-                                </a>
-                                <button type="submit"
-                                    class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">
-                                    Atualizar Registro
-                                </button>
-                            </div>
+                        <div class="mt-4 flex justify-end space-x-2">
+                            <a href="{{ route('record.show', ['punch' => $record->id]) }}"
+                                class="inline-block bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md">
+                                Voltar
+                            </a>
+                            <button type="submit"
+                                class="inline-flex items-center px-4 py-2 bg-blue-500 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700 active:bg-blue-900 focus:outline-none focus:border-blue-900 focus:ring ring-blue-300 disabled:opacity-25 transition ease-in-out duration-150">
+                                Atualizar Registro
+                            </button>
+                        </div>
                     </form>
                 </div>
             </div>
         </div>
     </div>
 
-    
+
+
     <script>
         $(document).ready(function() {
             function validateProjectHours(projectInput, nextProjectDiv, previousTotal) {
