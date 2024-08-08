@@ -36,7 +36,7 @@
                             <tr onclick="window.location.href='{{ route('user.index', $item->id) }}'"
                                 class="cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700">
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @if (in_array($item->name, ['Eloiza Tochio', 'Maria Eduarda']))
+                                    @if (in_array($item->name, ['Eloiza Tochio', 'Maria Eduarda', 'Nicolle Ramos']))
                                         <img class="h-10 w-10 rounded-full"
                                             src="{{ asset('assets/img/avatars/6.png') }}" alt="Avatar">
                                     @else
