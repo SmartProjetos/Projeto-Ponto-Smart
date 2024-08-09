@@ -68,7 +68,8 @@
                                 <div class="mb-4">
                                     <!-- Textarea 1 -->
                                     <label for="textarea1"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição das Atividades: </label>
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
+                                        das Atividades: </label>
                                     <textarea id="textarea1" name="textarea1" rows="4"
                                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         placeholder="Write your thoughts here..."></textarea>
@@ -100,7 +101,8 @@
                                 <div class="mb-4">
                                     <!-- Descrição das Atividades:  -->
                                     <label for="textarea2"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição das Atividades: </label>
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
+                                        das Atividades: </label>
                                     <textarea id="textarea2" name="textarea2" rows="4"
                                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         placeholder="Write your thoughts here..."></textarea>
@@ -132,7 +134,8 @@
                                 <div class="mb-4">
                                     <!-- Descrição das Atividades:  -->
                                     <label for="textarea3"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição das Atividades: </label>
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
+                                        das Atividades: </label>
                                     <textarea id="textarea3" name="textarea2" rows="4"
                                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         placeholder="Write your thoughts here..."></textarea>
@@ -164,7 +167,8 @@
                                 <div class="mb-4">
                                     <!-- Descrição das Atividades:  -->
                                     <label for="textarea4"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição das Atividades: </label>
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
+                                        das Atividades: </label>
                                     <textarea id="textarea4" name="textarea2" rows="4"
                                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         placeholder="Write your thoughts here..."></textarea>
@@ -196,7 +200,8 @@
                                 <div class="mb-4">
                                     <!-- Descrição das Atividades:  -->
                                     <label for="textarea5"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição das Atividades: </label>
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
+                                        das Atividades: </label>
                                     <textarea id="textarea5" name="textarea2" rows="4"
                                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         placeholder="Write your thoughts here..."></textarea>
@@ -228,7 +233,8 @@
                                 <div class="mb-4">
                                     <!-- Descrição das Atividades:  -->
                                     <label for="textarea6"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição das Atividades: </label>
+                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
+                                        das Atividades: </label>
                                     <textarea id="textare6" name="textarea2" rows="4"
                                         class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                                         placeholder="Write your thoughts here..."></textarea>
@@ -251,8 +257,6 @@
         </div>
     </div>
 
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
         $(document).ready(function() {
             function validateProjectHours(projectInput, nextProjectDiv, previousTotal) {
@@ -355,6 +359,20 @@
             }
 
             $('#entry_time, #departure_time').on('input', calculateTotalHours);
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            // Pegar a data e hora atuais
+            var now = new Date();
+
+            // Formatando a data no formato YYYY-MM-DD
+            var formattedDate = now.toISOString().slice(0, 10);
+            $('#date').val(formattedDate);
+
+            // Formatando a hora no formato HH:MM
+            var formattedTime = now.toTimeString().slice(0, 5);
+            $('#entry_time').val(formattedTime);
         });
     </script>
 </x-app-layout>
