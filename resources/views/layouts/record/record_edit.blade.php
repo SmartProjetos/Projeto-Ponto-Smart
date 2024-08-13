@@ -45,7 +45,7 @@
 
                         <div id="projects">
                             @for ($i = 1; $i <= 6; $i++)
-                                <div id="projects-0{{ $i }}"
+                                <div id="projects-0{{ $i }}" style="display: none;"
                                     class="{{ $record->{'project' . $i . '_name'} ? '' : 'hidden' }} mb-4">
                                     <div class="mb-4">
                                         <label for="project{{ $i }}_name"
@@ -68,7 +68,7 @@
                                             class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
                                             Projeto {{ $i }}:</label>
                                         <input type="time" name="project{{ $i }}_hours"
-                                            id="project3_hours"
+                                            id="project{{ $i }}_hours"
                                             class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md"
                                             value="{{ $record->{'project' . $i . '_hours'} }}">
                                     </div>
@@ -107,6 +107,7 @@
         $(document).ready(function() {
             function validateProjectHours(projectInput, nextProjectDiv, previousTotal) {
                 const inputValor = projectInput.val();
+                // projectInput.prop('required', true);
                 const totalHoursInput = $('#total_hours').val();
 
                 // Dividir o valor do input em horas e minutos
@@ -133,6 +134,7 @@
                     alert('Total de horas no projeto excede o tempo disponível!');
                 } else if (inputTotalMinutos < totalAvailableMinutos) {
                     nextProjectDiv.show(); // Mostrar a próxima div
+                    // projectInput.prop('required', true);
                 } else {
                     nextProjectDiv.hide(); // Esconder a próxima div se o tempo restante for zero
                 }
@@ -148,18 +150,21 @@
             let project5TotalMinutes = 0;
 
             $('input[name="project1_hours"]').on('input', function() {
+                $(this).prop('required', true)
                 const projectsDiv02 = $('#projects-02');
                 project1TotalMinutes = validateProjectHours($(this), projectsDiv02, 0);
                 showNextIfNotEmpty($(this), $('input[name="project2_hours"]'));
             });
 
             $('input[name="project2_hours"]').on('input', function() {
+                $(this).attr('required', true)
                 const projectsDiv03 = $('#projects-03');
                 project2TotalMinutes = validateProjectHours($(this), projectsDiv03, project1TotalMinutes);
                 showNextIfNotEmpty($(this), $('input[name="project3_hours"]'));
             });
 
             $('input[name="project3_hours"]').on('input', function() {
+                $(this).attr('required', true)
                 const projectsDiv04 = $('#projects-04');
                 project3TotalMinutes = validateProjectHours($(this), projectsDiv04, project1TotalMinutes +
                     project2TotalMinutes);
