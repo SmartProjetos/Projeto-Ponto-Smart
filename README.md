@@ -12,25 +12,31 @@ Follow the steps below to set up and install the system on your local environmen
     npm install
     ```
 
-2. **Install Composer dependencies:**
+2. **Build Node.js dependencies:**
+
+    ```bash
+    npm run build
+    ```
+
+3. **Install Composer dependencies:**
 
     ```bash
     composer install
     ```
 
-3. **Copy the environment file:**
+4. **Copy the environment file:**
 
     ```bash
     cp .env.example .env
     ```
 
-4. **Generate an application key:**
+5. **Generate an application key:**
 
     ```bash
     php artisan key:generate
     ```
 
-5. **Run database migrations:**
+6. **Run database migrations:**
 
     ```bash
     php artisan migrate
