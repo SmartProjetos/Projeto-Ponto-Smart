@@ -47,7 +47,7 @@ class RecordController extends Controller
 
         // Agrupando os registros por data
         $groupedRecords = $records->groupBy(function ($item) {
-            return Carbon::parse($item->date)->format('d/m/Y');
+            return Carbon::parse($item->date)->locale('pt_BR')->translatedFormat('l, d/m/Y');
         });
         //dd($groupedRecords);
 
@@ -67,7 +67,7 @@ class RecordController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->user_id);
+        // dd($request);
 
         $request->validate([
             'date' => 'required|date_format:Y-m-d',

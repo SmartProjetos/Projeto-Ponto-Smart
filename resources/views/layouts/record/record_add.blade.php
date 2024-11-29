@@ -44,203 +44,42 @@
                         </div>
 
                         <div id="projects">
-                            <div id="projects-01" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project1_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        1:</label>
-                                    <select name="project1_name" id="project1_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}">{{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
+                            @for ($i = 1; $i <= 6; $i++)
+                                <div id="projects-0{{ $i }}" style="display: none;">
+                                    <div class="mb-4">
+                                        <label for="project{{ $i }}_name"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
+                                            {{ $i }}:</label>
+                                        <select name="project{{ $i }}_name"
+                                            id="project{{ $i }}_name"
+                                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
+                                            @foreach ($projects as $project)
+                                                <option value="{{ $project->name }}">{{ $project->name }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
 
-                                <div class="mb-4">
-                                    <label for="project1_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto 1:</label>
-                                    <input type="time" name="project1_hours" id="project1_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                </div>
+                                    <div class="mb-4">
+                                        <label for="project{{ $i }}_hours"
+                                            class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
+                                            Projeto {{ $i }}:</label>
+                                        <input type="time" name="project{{ $i }}_hours"
+                                            id="project{{ $i }}_hours"
+                                            class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
+                                    </div>
 
-                                <div class="mb-4">
-                                    <!-- Textarea 1 -->
-                                    <label for="textarea1"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
-                                        das Atividades: </label>
-                                    <textarea id="textarea1" name="textarea1" rows="4"
-                                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Write your thoughts here..."></textarea>
+                                    <div class="mb-4">
+                                        <label for="textarea{{ $i }}"
+                                            class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
+                                            das Atividades:</label>
+                                        <textarea id="textarea{{ $i }}" name="textarea{{ $i }}" rows="4"
+                                            class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                            placeholder="Escreva aqui..."></textarea>
+                                    </div>
                                 </div>
-                            </div>
-
-                            <div id="projects-02" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project2_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        2:</label>
-                                    <select name="project2_name" id="project2_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}">{{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="project2_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto
-                                        2:</label>
-                                    <input type="time" name="project2_hours" id="project2_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                </div>
-
-                                <div class="mb-4">
-                                    <!-- Descrição das Atividades:  -->
-                                    <label for="textarea2"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
-                                        das Atividades: </label>
-                                    <textarea id="textarea2" name="textarea2" rows="4"
-                                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Write your thoughts here..."></textarea>
-                                </div>
-                            </div>
-
-                            <div id="projects-03" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project3_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        3:</label>
-                                    <select name="project3_name" id="project3_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}">{{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="project3_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto
-                                        3:</label>
-                                    <input type="time" name="project3_hours" id="project3_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                </div>
-
-                                <div class="mb-4">
-                                    <!-- Descrição das Atividades:  -->
-                                    <label for="textarea3"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
-                                        das Atividades: </label>
-                                    <textarea id="textarea3" name="textarea2" rows="4"
-                                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Write your thoughts here..."></textarea>
-                                </div>
-                            </div>
-
-                            <div id="projects-04" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project4_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        4:</label>
-                                    <select name="project4_name" id="project4_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}">{{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="project4_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto
-                                        4:</label>
-                                    <input type="time" name="project4_hours" id="project4_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                </div>
-
-                                <div class="mb-4">
-                                    <!-- Descrição das Atividades:  -->
-                                    <label for="textarea4"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
-                                        das Atividades: </label>
-                                    <textarea id="textarea4" name="textarea2" rows="4"
-                                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Write your thoughts here..."></textarea>
-                                </div>
-                            </div>
-
-                            <div id="projects-05" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project5_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        5:</label>
-                                    <select name="project5_name" id="project5_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}">{{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="project5_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto
-                                        5:</label>
-                                    <input type="time" name="project5_hours" id="project5_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                </div>
-
-                                <div class="mb-4">
-                                    <!-- Descrição das Atividades:  -->
-                                    <label for="textarea5"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
-                                        das Atividades: </label>
-                                    <textarea id="textarea5" name="textarea2" rows="4"
-                                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Write your thoughts here..."></textarea>
-                                </div>
-                            </div>
-
-                            <div id="projects-06" style="display: none;">
-                                <div class="mb-4">
-                                    <label for="project6_name"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Projeto
-                                        6:</label>
-                                    <select name="project6_name" id="project6_name"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                        @foreach ($projects as $project)
-                                            <option value="{{ $project->name }}">{{ $project->name }}</option>
-                                        @endforeach
-                                    </select>
-                                </div>
-
-                                <div class="mb-4">
-                                    <label for="project6_hours"
-                                        class="block text-sm font-medium text-gray-700 dark:text-gray-300">Horas no
-                                        Projeto
-                                        6:</label>
-                                    <input type="time" name="project6_hours" id="project6_hours"
-                                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-300 sm:text-sm rounded-md">
-                                </div>
-
-                                <div class="mb-4">
-                                    <!-- Descrição das Atividades:  -->
-                                    <label for="textarea6"
-                                        class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Descrição
-                                        das Atividades: </label>
-                                    <textarea id="textare6" name="textarea2" rows="4"
-                                        class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                        placeholder="Write your thoughts here..."></textarea>
-                                </div>
-                            </div>
+                            @endfor
                         </div>
+
                         <div class="mt-4">
                             <a href="{{ route('record.index') }}"
                                 class="inline-block bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded-lg shadow-md">
