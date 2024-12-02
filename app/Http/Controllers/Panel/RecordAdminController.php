@@ -10,21 +10,24 @@ use Illuminate\Http\Request;
 
 class RecordAdminController extends Controller
 {
-    // public function index($id)
-    // {
-    //     // dd($id);
+    public function index2()
+    {
 
-    //     $user = User::find($id);
-    //     if (!$user) {
-    //         // Retorna um erro ou redireciona para uma página de erro
-    //         return response()->json(['error' => 'Usuário não encontrado'], 404);
-    //     }
-    //     $records = Record::where('user_id', $id)->orderBy('date', 'desc')->get();
-    //     $groupedRecords = $records->groupBy(function ($item) {
-    //         return Carbon::parse($item->date)->format('d/m/Y');
-    //     });
-    //     return view('layouts.record.record_admin', compact('records', 'user', 'groupedRecords'));
-    // }
+        $users = User::orderBy('name')->get();
+
+        // Carregar registros de ponto com os usuários relacionados
+        $record = Record::with('user')->orderBy('entry_time', 'desc')->get();
+
+        // $variables = [
+        //     'etas' => $etas
+        // ];
+        $hoursPerWeekByUser = [];
+        foreach ($users as $user) {
+            $hoursPerWeekByUser[$user->name] = ControllerHoursPerWeek::getHoursPerWeekByUser($user->id);
+        }
+        // dd($hoursPerWeekByUser);
+        return view('layouts.dashboardadmin.dashboardadmin', compact('users', 'record', 'hoursPerWeekByUser'));
+    }
 
     public function index($id, Request $request)
     {

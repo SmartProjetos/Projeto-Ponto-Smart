@@ -21,6 +21,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'role',
+        'type_of_employee',
+        'weekly_hours',
+        'extra_hours',
+        'profile_image_path',
     ];
 
     /**
@@ -44,5 +48,12 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+
+    // User.php
+    public function records()
+    {
+        return $this->hasMany(Record::class);
     }
 }

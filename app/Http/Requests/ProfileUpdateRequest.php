@@ -18,6 +18,11 @@ class ProfileUpdateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($this->user()->id)],
+            'type_of_employee' => [
+                'required',
+                'string',
+                'in:bolsista,CLT,"CLT mais bolsista",estagio,"estagio mais bolsista",consultoria,outros',
+            ],
         ];
     }
 }

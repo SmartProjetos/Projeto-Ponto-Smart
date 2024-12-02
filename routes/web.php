@@ -4,6 +4,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\Panel\RecordAdminController;
 use App\Http\Controllers\Panel\RecordController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserController;
 use App\Http\Middleware\CheckRole;
 use App\Services\UserService;
 use Illuminate\Support\Facades\Route;
@@ -17,15 +18,16 @@ Route::get('/', function () {
 // });
 
 Route::middleware(['auth'])->group(function () {
-
     Route::get('/', function () {
-
-        return app(UserService::class)->redirectRole(auth()->user());
+        // Redireciona diretamente para a página inicial autenticada
+        return redirect()->route('dashboard.index');
     })->name('dashboard');
 });
 
+
 Route::prefix('dashboard')->middleware(['auth'])->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->middleware(CheckRole::class)->name('dashboard.index');
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
+    Route::put('/user/update-avatar', [UserController::class, 'updateAvatar'])->name('user.updateAvatar');
     Route::get('/record', [RecordController::class, 'index'])->name('record.index');
     Route::post('/record', [RecordController::class, 'store'])->name('record.store');
     Route::get('/record/add', [RecordController::class, 'create'])->name('record.add');
@@ -34,9 +36,11 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::put('/record/{punch}', [RecordController::class, 'update'])->name('record.update');
     Route::get('/record/{punch}/delete', [RecordController::class, 'destroy'])->name('record.destroy');
 
-    //Parte administrativa
-    Route::get('/{user}', [RecordAdminController::class, 'index'])->name('user.index');
-    Route::get('/{user}/record/{punch}', [RecordAdminController::class, 'show'])->name('user.show');
+    Route::prefix('admin')->middleware(CheckRole::class)->group(function () {
+        Route::get('/', [RecordAdminController::class, 'index2'])->name('dashboardadmin.index');
+        Route::get('/{user}', [RecordAdminController::class, 'index'])->name('user.index');
+        Route::get('/{user}/record/{punch}', [RecordAdminController::class, 'show'])->name('user.show');
+    });
 });
 
 Route::middleware('auth')->group(function () {
