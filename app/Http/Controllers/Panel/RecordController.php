@@ -10,50 +10,87 @@ use Illuminate\Http\Request;
 
 class RecordController extends Controller
 {
-    // Exibir histórico de registros de ponto
+
+
     public function index(Request $request)
     {
         $user = auth()->user();
 
-        // Pegando o valor do filtro do request
-        $filter = $request->input('filter', '30d'); // Default to '30d' if not provided
+        // FILTRO DE REGISTROS HISTÓRICOS
+        $filter = $request->input('filter', '30d'); // Filtro padrão
+        $startDate = null;
+        $endDate = Carbon::now(); // Data de término padrão (hoje)
 
-        // Definindo a data de início com base no filtro selecionado
-        $startDate = Carbon::now()->subDays(30); // Default to last 30 days
+        // Verificar intervalo personalizado
+        if ($request->has(['start-date', 'end-date'])) {
+            $startDate = $request->input('start-date') ? Carbon::parse($request->input('start-date'))->startOfDay() : null;
+            $endDate = $request->input('end-date') ? Carbon::parse($request->input('end-date'))->endOfDay() : Carbon::now();
 
-        switch ($filter) {
-            case '1d':
-                $startDate = Carbon::now()->startOfDay();
-                break;
-            case '7d':
-                $startDate = Carbon::now()->subDays(7)->startOfDay();
-                break;
-            case '30d':
-                $startDate = Carbon::now()->subDays(30)->startOfDay();
-                break;
-            case '1m':
-                $startDate = Carbon::now()->subMonth()->startOfDay();
-                break;
-            case '1y':
-                $startDate = Carbon::now()->subYear()->startOfDay();
-                break;
+            if (!$startDate) {
+                return back()->with('error', 'Por favor, selecione a data inicial para o intervalo personalizado.');
+            }
+
+            if ($startDate > $endDate) {
+                return back()->with('error', 'A data inicial não pode ser maior que a data final.');
+            }
+        } else {
+            // Intervalos pré-definidos
+            switch ($filter) {
+                case '1d':
+                    $startDate = Carbon::now()->startOfDay();
+                    break;
+                case '7d':
+                    $startDate = Carbon::now()->subDays(7)->startOfDay();
+                    break;
+                case '30d':
+                    $startDate = Carbon::now()->subDays(30)->startOfDay();
+                    break;
+                case '1m':
+                    $startDate = Carbon::now()->subMonth()->startOfDay();
+                    break;
+                case '1y':
+                    $startDate = Carbon::now()->subYear()->startOfDay();
+                    break;
+            }
         }
 
-        // Consultando os registros com base no filtro
+        // Buscar registros no intervalo
         $records = Record::where('user_id', $user->id)
-            ->whereDate('date', '>=', $startDate) // Use `whereDate` to compare only the date part
+            ->whereBetween('date', [$startDate, $endDate])
             ->orderBy('date', 'desc')
             ->get();
 
-        // Agrupando os registros por data
         $groupedRecords = $records->groupBy(function ($item) {
             return Carbon::parse($item->date)->locale('pt_BR')->translatedFormat('l, d/m/Y');
         });
-        //dd($groupedRecords);
 
-        $hoursPerWeek = ControllerHoursPerWeek::getHoursPerWeekByUser($user->id);
+        // HORAS POR SEMANA ATUAL (Gráfico)
+        $startOfWeek = Carbon::now()->startOfWeek();
+        $endOfWeek = Carbon::now()->endOfWeek();
 
-        return view('layouts.record.record_index', compact('records', 'user', 'groupedRecords', 'hoursPerWeek'));
+        $dailyData = Record::where('user_id', $user->id)
+            ->whereBetween('date', [$startOfWeek, $endOfWeek])
+            ->selectRaw('DATE(date) as day, SEC_TO_TIME(SUM(TIME_TO_SEC(total_hours))) as total_hours')
+            ->groupBy('day')
+            ->orderBy('day')
+            ->get();
+
+        $days = [];
+        $hoursByDay = [];
+
+        foreach ($dailyData as $data) {
+            $days[] = Carbon::parse($data->day)->format('d/m'); // Dias da semana
+            $timeParts = explode(':', $data->total_hours);
+            $hoursByDay[] = (int)$timeParts[0] + ((int)$timeParts[1] / 60); // Horas em decimal
+        }
+
+        return view('layouts.record.record_index', [
+            'user' => $user,
+            'groupedRecords' => $groupedRecords,
+            'hoursPerWeek' => ControllerHoursPerWeek::getHoursPerWeekByUser($user->id),
+            'days' => $days,
+            'hoursByDay' => $hoursByDay,
+        ]);
     }
 
 

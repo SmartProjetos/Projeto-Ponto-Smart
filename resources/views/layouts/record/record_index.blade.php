@@ -1,4 +1,14 @@
 <x-app-layout>
+
+    <style>
+        #weeklyHoursChart {
+            max-height: 250px;
+            /* Define a altura máxima */
+            width: 100%;
+            /* Garante que a largura se ajuste */
+        }
+    </style>
+
     @if (session('success'))
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -26,51 +36,51 @@
     @endif
 
     <div class="container mx-auto py-8">
+        <div class="container mx-auto py-6">
+            <h2 class="text-xl sm:text-2xl font-bold text-center text-gray-800 dark:text-gray-100 mb-4">
+                Horas Trabalhadas - Semana Atual
+            </h2>
+
+            <div class="bg-white dark:bg-gray-800 shadow-md sm:rounded-lg p-4">
+                <div class="relative">
+                    <canvas id="weeklyHoursChart" class="max-h-64"></canvas>
+                </div>
+            </div>
+        </div>
+
+
+
         <h1 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-8">
             Histórico de Registro de Pontos de {{ auth()->user()->name }}
             <span class="block mt-2 text-lg">Quantidade de Horas da Semana {{ $hoursPerWeek }}</span>
         </h1>
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-3 overflow-x-auto">
-                <div class="relative">
-                    <!-- Dropdown Button -->
-                    <button id="dropdownRadioButton" data-dropdown-toggle="dropdownRadio"
-                        class="inline-flex items-center text-gray-500 bg-white border border-gray-300 focus:outline-none hover:bg-gray-100 focus:ring-4 focus:ring-gray-100 font-medium rounded-lg text-sm px-3 py-1.5 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:hover:border-gray-600 dark:focus:ring-gray-700"
-                        type="button">
-                        <svg class="w-3 h-3 text-gray-500 dark:text-gray-400 me-3" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
-                        </svg>
-                        Selecione a data
-                        <svg class="w-2.5 h-2.5 ms-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                            fill="none" viewBox="0 0 10 6">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m1 1 4 4 4-4" />
-                        </svg>
-                    </button>
 
-                    <!-- Dropdown Menu -->
-                    <div id="dropdownRadio"
-                        class="z-50 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-full left-0 mt-2">
-                        <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
-                            aria-labelledby="dropdownRadioButton">
-                            @foreach ([['1d', 'Último dia'], ['7d', 'Últimos 7 dias'], ['30d', 'Últimos 30 dias'], ['1m', 'Último mês'], ['1y', 'Último ano']] as [$value, $label])
-                                <li>
-                                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        <input id="filter-radio-example-{{ $loop->index + 1 }}" type="radio"
-                                            value="{{ $value }}" name="filter-radio"
-                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="filter-radio-example-{{ $loop->index + 1 }}"
-                                            class="w-full ms-2 text-sm font-medium text-gray-900 rounded dark:text-gray-300">
-                                            {{ $label }}
-                                        </label>
-                                    </div>
-                                </li>
-                            @endforeach
-                        </ul>
-                    </div>
-                </div>
+                <form action="{{ route('record.index') }}" method="POST"
+                    class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
+                    @csrf
+
+                    <!-- Título do Formulário -->
+                    <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-8">Selecionar
+                        Intervalo de Datas</h2>
+
+                    <input type="text" name="daterange" id="daterange"
+                        class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="Selecione o intervalo de datas" />
+
+                    <!-- Campos ocultos para enviar start-date e end-date -->
+                    <input type="hidden" name="start-date" id="start-date">
+                    <input type="hidden" name="end-date" id="end-date">
+
+                    <!-- Botão para aplicar o filtro -->
+                    <button type="submit"
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Filtrar
+                    </button>
+                </form>
+
+
 
                 <!-- Table -->
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 mt-6">
@@ -155,9 +165,24 @@
                 </table>
             </div>
         </div>
-
-
     </div>
+
+    <script>
+        jQuery.noConflict();
+        jQuery(function($) {
+            $('input[name="daterange"]').daterangepicker({
+                opens: 'left',
+                locale: {
+                    format: 'YYYY-MM-DD' // Configura o formato das datas
+                }
+            }, function(start, end) {
+                // Preenche os campos ocultos com as datas selecionadas
+                $('#start-date').val(start.format('YYYY-MM-DD'));
+                $('#end-date').val(end.format('YYYY-MM-DD'));
+            });
+        });
+    </script>
+
     <script>
         function deleteRecord(element) {
             event.stopPropagation();
@@ -205,6 +230,86 @@
                     dropdown.addClass('hidden');
                 }
             });
+        });
+    </script>
+
+    <script>
+        var days = @json($days); // Dias da semana
+        var hoursByDay = @json($hoursByDay); // Horas em formato decimal
+
+        var ctx = document.getElementById('weeklyHoursChart').getContext('2d');
+
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: days,
+                datasets: [{
+                    label: 'Horas Trabalhadas',
+                    data: hoursByDay,
+                    backgroundColor: 'rgba(76, 154, 255, 0.2)',
+                    borderColor: '#4C9AFF',
+                    borderWidth: 2,
+                    pointBackgroundColor: '#3182CE',
+                    pointBorderColor: '#fff',
+                    pointRadius: 5,
+                    tension: 0.4 // Suavizar linha
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Permitir que o gráfico se ajuste
+                plugins: {
+                    legend: {
+                        display: true,
+                        labels: {
+                            font: {
+                                size: 12 // Tamanho da fonte da legenda
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.raw.toFixed(2) + ' horas';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Horas',
+                            font: {
+                                size: 14 // Tamanho da fonte do título
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 12 // Tamanho da fonte dos ticks
+                            },
+                            callback: function(value) {
+                                return value + 'h'; // Formato "Xh"
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Dias da Semana',
+                            font: {
+                                size: 14 // Tamanho da fonte do título
+                            }
+                        },
+                        ticks: {
+                            font: {
+                                size: 12 // Tamanho da fonte dos ticks
+                            }
+                        }
+                    }
+                }
+            }
         });
     </script>
 </x-app-layout>
