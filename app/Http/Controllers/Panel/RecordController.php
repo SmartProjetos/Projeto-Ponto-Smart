@@ -14,26 +14,26 @@ class RecordController extends Controller
     {
         $user = auth()->user();
 
-    if ($request->isMethod('post') && $request->has(['start-date', 'end-date'])) {
-        try {
-            $startDate = Carbon::parse($request->input('start-date'))->startOfDay();
-            $endDate = Carbon::parse($request->input('end-date'))->endOfDay();
-        } catch (\Exception $e) {
-            return redirect()->back()->withErrors('Erro ao processar as datas.');
+        if ($request->isMethod('post') && $request->has(['start-date', 'end-date'])) {
+            try {
+                $startDate = Carbon::parse($request->input('start-date'))->startOfDay();
+                $endDate = Carbon::parse($request->input('end-date'))->endOfDay();
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors('Erro ao processar as datas.');
+            }
+        } else {
+            $startDate = Carbon::now()->subDays(30)->startOfDay();
+            $endDate = Carbon::now()->endOfDay();
         }
-    } else {
-        $startDate = Carbon::now()->subDays(30)->startOfDay();
-        $endDate = Carbon::now()->endOfDay();
-    }
 
-    $records = Record::where('user_id', $user->id)
-        ->whereBetween('date', [$startDate, $endDate])
-        ->orderBy('date', 'desc')
-        ->get();
+        $records = Record::where('user_id', $user->id)
+            ->whereBetween('date', [$startDate, $endDate])
+            ->orderBy('date', 'desc')
+            ->get();
 
-    $groupedRecords = $records->groupBy(function ($item) {
-        return Carbon::parse($item->date)->locale('pt_BR')->translatedFormat('l, d/m/Y');
-    });
+        $groupedRecords = $records->groupBy(function ($item) {
+            return Carbon::parse($item->date)->locale('pt_BR')->translatedFormat('l, d/m/Y');
+        });
 
         // Dados para gráfico (opcional)
         $graphData = $this->getWeeklyGraphData($user->id);
@@ -47,50 +47,6 @@ class RecordController extends Controller
         ]);
     }
 
-
-    /**
-     * Processa o intervalo de datas personalizado.
-     */
-    private function processCustomDateRange(?string $startDateInput, ?string $endDateInput): array
-    {
-        if (!$startDateInput || !$endDateInput) {
-            return [null, null];
-        }
-
-        try {
-            $startDate = Carbon::parse($startDateInput)->startOfDay();
-            $endDate = Carbon::parse($endDateInput)->endOfDay();
-
-            if ($startDate > $endDate) {
-                return [null, null]; // Retorna erro se a data inicial for maior
-            }
-
-            return [$startDate, $endDate];
-        } catch (\Exception $e) {
-            return [null, null];
-        }
-    }
-
-    /**
-     * Obtém a data inicial com base no filtro.
-     */
-    private function getStartDateFromFilter(string $filter): ?Carbon
-    {
-        switch ($filter) {
-            case '1d':
-                return Carbon::now()->startOfDay();
-            case '7d':
-                return Carbon::now()->subDays(7)->startOfDay();
-            case '30d':
-                return Carbon::now()->subDays(30)->startOfDay();
-            case '1m':
-                return Carbon::now()->subMonth()->startOfDay();
-            case '1y':
-                return Carbon::now()->subYear()->startOfDay();
-            default:
-                return null;
-        }
-    }
 
     /**
      * Gera dados para o gráfico semanal.
@@ -111,9 +67,12 @@ class RecordController extends Controller
         $hoursByDay = [];
 
         foreach ($dailyData as $data) {
-            $days[] = Carbon::parse($data->day)->format('d/m');
-            $timeParts = explode(':', $data->total_hours);
-            $hoursByDay[] = (int)$timeParts[0] + ((int)$timeParts[1] / 60); // Horas em decimal
+            // Verifica se o campo 'day' não está vazio e se 'total_hours' não está vazio
+            if (!empty($data->day) && !empty($data->total_hours)) {
+                $days[] = Carbon::parse($data->day)->format('d/m');
+                $timeParts = explode(':', $data->total_hours);
+                $hoursByDay[] = (int)$timeParts[0] + ((int)$timeParts[1] / 60); // Horas em decimal
+            }
         }
 
         return ['days' => $days, 'hoursByDay' => $hoursByDay];
