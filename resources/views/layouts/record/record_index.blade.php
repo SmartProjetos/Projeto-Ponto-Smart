@@ -57,28 +57,34 @@
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-3 overflow-x-auto">
 
-                <form action="{{ route('record.index') }}" method="POST"
-                    class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-4">
+                <form action="{{ route('record.store2') }}" method="POST"
+                    class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-4" id="filter-form">
                     @csrf
 
-                    <!-- Título do Formulário -->
                     <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-8">Selecionar
                         Intervalo de Datas</h2>
 
-                    <input type="text" name="daterange" id="daterange"
+                    <div id="reportrange"
+                        style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                        <i class="fa fa-calendar"></i>&nbsp;
+                        <span></span> <i class="fa fa-caret-down"></i>
+                    </div>
+                    {{-- <input type="text" name="daterange" id="daterange"
                         class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        placeholder="Selecione o intervalo de datas" />
+                        placeholder="Selecione o intervalo de datas" /> --}}
 
-                    <!-- Campos ocultos para enviar start-date e end-date -->
                     <input type="hidden" name="start-date" id="start-date">
                     <input type="hidden" name="end-date" id="end-date">
 
-                    <!-- Botão para aplicar o filtro -->
+
                     <button type="submit"
                         class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         Filtrar
                     </button>
                 </form>
+
+
+
 
 
 
@@ -170,18 +176,48 @@
     <script>
         jQuery.noConflict();
         jQuery(function($) {
-            $('input[name="daterange"]').daterangepicker({
-                opens: 'left',
-                locale: {
-                    format: 'YYYY-MM-DD' // Configura o formato das datas
-                }
-            }, function(start, end) {
-                // Preenche os campos ocultos com as datas selecionadas
+                        // Inicializa o DateRangePicker para o reportrange
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
                 $('#start-date').val(start.format('YYYY-MM-DD'));
                 $('#end-date').val(end.format('YYYY-MM-DD'));
-            });
+            }
+
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                locale: {
+                    format: 'MMMM D, YYYY',
+                    applyLabel: 'Aplicar',
+                    cancelLabel: 'Cancelar',
+                    fromLabel: 'De',
+                    toLabel: 'Até',
+                    daysOfWeek: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                    monthNames: [
+                        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                    ],
+                    firstDay: 0
+                },
+                ranges: {
+                    'Hoje': [moment(), moment()],
+                    'Ontem': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 Dias': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 Dias': [moment().subtract(29, 'days'), moment()],
+                    'Este Mês': [moment().startOf('month'), moment().endOf('month')],
+                    'Último Mês': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1,
+                        'month').endOf('month')]
+                },
+
+            }, cb);
+
+            cb(start, end);
         });
     </script>
+
 
     <script>
         function deleteRecord(element) {

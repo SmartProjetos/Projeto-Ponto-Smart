@@ -29,6 +29,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard.index');
     Route::put('/user/update-avatar', [UserController::class, 'updateAvatar'])->name('user.updateAvatar');
     Route::get('/record', [RecordController::class, 'index'])->name('record.index');
+    Route::post('/record2', [RecordController::class, 'index'])->name('record.store2');
     Route::post('/record', [RecordController::class, 'store'])->name('record.store');
     Route::get('/record/add', [RecordController::class, 'create'])->name('record.add');
     Route::get('/record/{punch}', [RecordController::class, 'show'])->name('record.show');
