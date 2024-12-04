@@ -40,6 +40,7 @@ Route::prefix('dashboard')->middleware(['auth'])->group(function () {
     Route::prefix('admin')->middleware(CheckRole::class)->group(function () {
         Route::get('/', [RecordAdminController::class, 'index2'])->name('dashboardadmin.index');
         Route::get('/{user}', [RecordAdminController::class, 'index'])->name('user.index');
+        Route::post('/{user}', [RecordAdminController::class, 'index'])->name('user.store');
         Route::get('/{user}/record/{punch}', [RecordAdminController::class, 'show'])->name('user.show');
     });
 });

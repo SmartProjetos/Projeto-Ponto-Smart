@@ -7,6 +7,7 @@ use App\Models\Record;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class RecordAdminController extends Controller
 {
@@ -34,46 +35,122 @@ class RecordAdminController extends Controller
         // dd($request);
 
         $user = User::find($id);
-        if (!$user) {
-            return response()->json(['error' => 'Usuário não encontrado'], 404);
+        $weeklyHoursInMinutes = $this->convertWeeklyHoursToMinutes($user->weekly_hours);
+        $hoursByMonth = $this->getHoursByMonth($id);
+
+        $months = [];
+        $totalMinutes = [];
+
+        foreach ($hoursByMonth as $record) {
+            $totalMinutesInRecord = $this->convertTimeToMinutes($record->total_hours);
+            $months[] = Carbon::createFromFormat('m', $record->month)->format('M');
+            $totalMinutes[] = $totalMinutesInRecord;
         }
 
-        // Pegando o valor do filtro do request
-        $filter = $request->input('filter', '30d'); // Default to '30d' if not provided
+        // Obtendo horas registradas na semana atual
+        $totalMinutesInWeek = $this->getHoursByCurrentWeek($id);
 
-        // Definindo a data de início com base no filtro selecionado
-        $startDate = Carbon::now()->subDays(30); // Default to last 30 days
+        // Calculando o saldo de horas
+        $balanceMinutes = $totalMinutesInWeek - $weeklyHoursInMinutes;
+        $weeklyBalance = $this->formatBalance($balanceMinutes);
 
-        switch ($filter) {
-            case '1d':
-                $startDate = Carbon::now()->subDay();
-                break;
-            case '7d':
-                $startDate = Carbon::now()->subDays(7);
-                break;
-            case '30d':
-                $startDate = Carbon::now()->subDays(30);
-                break;
-            case '1m':
-                $startDate = Carbon::now()->subMonth();
-                break;
-            case '1y':
-                $startDate = Carbon::now()->subYear();
-                break;
+
+        if ($request->isMethod('post') && $request->has(['start-date', 'end-date'])) {
+            try {
+                $startDate = Carbon::parse($request->input('start-date'))->startOfDay();
+                $endDate = Carbon::parse($request->input('end-date'))->endOfDay();
+            } catch (\Exception $e) {
+                return redirect()->back()->withErrors('Erro ao processar as datas.');
+            }
+        } else {
+            $startDate = Carbon::now()->subDays(30)->startOfDay();
+            $endDate = Carbon::now()->endOfDay();
         }
 
-        // Consultando os registros com base no filtro
-        $records = Record::where('user_id', $id)
-            ->where('date', '>=', $startDate)
+        $records = Record::where('user_id', $user->id)
+            ->whereBetween('date', [$startDate, $endDate])
             ->orderBy('date', 'desc')
             ->get();
 
         $groupedRecords = $records->groupBy(function ($item) {
-            return Carbon::parse($item->date)->format('d/m/Y');
+            return Carbon::parse($item->date)->locale('pt_BR')->translatedFormat('l, d/m/Y');
         });
-        $hoursPerWeek = ControllerHoursPerWeek::getHoursPerWeekByUser($id);
+
+        $user_week = $user->weekly_hours;
+        $hoursPerWeek = ControllerHoursPerWeek::getHoursPerWeekByUser($user->id);
         // dd($hoursPerWeek);
-        return view('layouts.record.record_admin', compact('records', 'user', 'groupedRecords', 'hoursPerWeek'));
+        return view('layouts.record.record_admin', compact(
+            'records',
+            'user',
+            'groupedRecords',
+            'hoursPerWeek',
+            'months',
+            'totalMinutes',
+            'user_week',
+            'weeklyBalance'
+        ));
+    }
+
+    private function convertWeeklyHoursToMinutes($weeklyHours)
+    {
+        if (empty($weeklyHours)) {
+            throw new \InvalidArgumentException('Carga horária semanal não definida para o usuário.');
+        }
+
+        $timeParts = explode(':', $weeklyHours);
+        $hours = (int)$timeParts[0];
+        $minutes = (int)$timeParts[1];
+
+        return ($hours * 60) + $minutes;
+    }
+
+    private function getHoursByMonth($userId)
+    {
+        $sixMonthsAgo = Carbon::now()->subMonths(6);
+
+        return DB::table('records')
+            ->select(
+                DB::raw('MONTH(created_at) as month'),
+                DB::raw('SEC_TO_TIME(SUM(TIME_TO_SEC(total_hours))) as total_hours')
+            )
+            ->where('created_at', '>=', $sixMonthsAgo)
+            ->where('user_id', $userId)
+            ->groupBy(DB::raw('MONTH(created_at)'))
+            ->orderBy(DB::raw('MONTH(created_at)'))
+            ->get();
+    }
+
+    private function getHoursByCurrentWeek($userId)
+    {
+        $startOfWeek = Carbon::now()->startOfWeek(); // Início da semana
+        $endOfWeek = Carbon::now()->endOfWeek(); // Fim da semana
+        return DB::table('records')
+            ->where('user_id', $userId)
+            ->whereBetween('created_at', [$startOfWeek, $endOfWeek])
+            ->sum(DB::raw('TIME_TO_SEC(total_hours)')) / 60; // Convertendo segundos para minutos
+    }
+
+    private function convertTimeToMinutes($time)
+    {
+        $timeParts = explode(':', $time);
+        $hours = (int)$timeParts[0];
+        $minutes = (int)$timeParts[1];
+
+        return ($hours * 60) + $minutes;
+    }
+
+    private function formatBalance($balanceMinutes)
+    {
+        $hours = intdiv(abs($balanceMinutes), 60);
+        $minutes = abs($balanceMinutes) % 60;
+        $sign = $balanceMinutes >= 0 ? '(extra)' : '(débito)';
+
+        $formattedValue = sprintf('%02d:%02d', $hours, $minutes);
+
+        return [
+            'value' => $formattedValue,
+            'sign' => $sign,
+        ];
     }
 
 
@@ -87,6 +164,4 @@ class RecordAdminController extends Controller
         // dd($user_id);
         return view('layouts.record.record_adminshow', compact('punch', 'user_id'));
     }
-
-
 }

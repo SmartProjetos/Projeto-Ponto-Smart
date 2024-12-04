@@ -1,47 +1,156 @@
 <x-app-layout>
+    <div class="container mx-auto py-6">
+        <div class="bg-white dark:bg-gray-800 shadow-md sm:rounded-lg overflow-hidden">
+            <div class="flex flex-wrap md:flex-nowrap p-6 items-center">
+                <!-- Coluna Esquerda: Foto do Perfil -->
+                <div class="flex-shrink-0 w-full md:w-1/3 text-center md:border-r dark:border-gray-700">
+                    <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow-md">
+                        <form action="{{ route('user.updateAvatar') }}" method="POST" enctype="multipart/form-data">
+                            @csrf
+                            @method('PUT')
+                            <label for="avatar" class="cursor-pointer">
+                                <img src="{{ $user->profile_image_path ? asset('storage/' . $user->profile_image_path) : 'https://via.placeholder.com/150' }}"
+                                    alt="Foto do Perfil"
+                                    class="w-32 h-32 mx-auto rounded-full border-4 border-blue-600 dark:border-blue-400 shadow-md">
+                            </label>
+                            <input id="avatar" name="avatar" type="file" class="hidden" accept="image/*"
+                                onchange="this.form.submit()">
+                        </form>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-4">
+                            {{ $user->name }}
+                        </h1>
+                    </div>
+                </div>
+
+                <!-- Coluna Direita: Informações do Usuário -->
+                <div class="w-full md:w-2/3 mt-6 md:mt-0 md:pl-6">
+                    <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                        <h1 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-8 pt-6">
+                            Informações do Funcionário
+                        </h1>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 border rounded-lg shadow-sm">
+                                <label class="block text-gray-600 dark:text-gray-300 font-medium">Nome</label>
+                                <p class="text-gray-800 dark:text-gray-100">{{ $user->name }}</p>
+                            </div>
+                            <div class="p-4 border rounded-lg shadow-sm">
+                                <label class="block text-gray-600 dark:text-gray-300 font-medium">E-mail</label>
+                                <p class="text-gray-800 dark:text-gray-100">{{ $user->email }}</p>
+                            </div>
+                            <div class="p-4 border rounded-lg shadow-sm">
+                                <label class="block text-gray-600 dark:text-gray-300 font-medium">Tipo de
+                                    Contrato</label>
+                                <p class="text-gray-800 dark:text-gray-100">
+                                    @php
+                                        $typeOfEmployee = $user->type_of_employee ?? 'N/A';
+                                        $typeLabels = [
+                                            'bolsista' => 'Bolsista',
+                                            'CLT' => 'CLT',
+                                            'CLT mais bolsista' => 'CLT mais Bolsa',
+                                            'estagio' => 'Estágio',
+                                            'estagio mais bolsista' => 'Estágio mais Bolsa',
+                                            'consultoria' => 'Consultoria',
+                                            'outros' => 'Outros',
+                                        ];
+                                    @endphp
+
+                                    {{ $typeLabels[$typeOfEmployee] ?? $typeOfEmployee }}
+                                </p>
+                            </div>
+
+                            <div class="p-4 border rounded-lg shadow-sm">
+                                <label class="block text-gray-600 dark:text-gray-300 font-medium">Acesso</label>
+                                <p class="text-gray-800 dark:text-gray-100">
+                                    @if ($user->role === 'funcionarios')
+                                        Colaborador
+                                    @elseif($user->role === 'administrativo')
+                                        Gerente
+                                    @elseif($user->role === 'master')
+                                        Desenvolvedor
+                                    @else
+                                        {{ $user->role }}
+                                    @endif
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6 mt-6">
+            <h1 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-8">
+               Hora Extre de {{ $user->name }}
+            </h1>
+
+            <div class="flex flex-wrap md:flex-nowrap p-6 items-start text-center">
+                <div class="left-column flex-1 pr-6">
+                    <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Carga Horária Semanal
+                        </h2>
+                        <p class="text-2xl font-bold text-gray-900 dark:text-gray-100">
+                            {{ $user_week }}
+                        </p>
+                    </div>
+                </div>
+
+                <div class="right-column flex-1">
+                    <div class="bg-gray-100 dark:bg-gray-700 p-4 rounded-lg shadow-md">
+                        <h2 class="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">Horas Extras Da Semana
+                        </h2>
+                        <p
+                            class="text-2xl font-bold {{ $weeklyBalance['sign'] == '(débito)' ? 'text-red-500 dark:text-red-400' : 'text-green-500 dark:text-green-400' }}">
+                            {{ $weeklyBalance['value'] }} {{ $weeklyBalance['sign'] }}
+                            <!-- Valor das horas extras com formato -->
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Contêiner para o título e gráfico -->
+        <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6 mt-6">
+            <h1 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-8 pt-6">
+                Histórico de Horas de {{ $user->name }}
+            </h1>
+
+            <!-- Gráfico Chart.js -->
+            <div class="overflow-hidden">
+                <canvas id="hoursChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <div class="container mx-auto py-8">
-        <h1 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-8">
-            Histórico de Registro de Pontos de {{ $user->name }}
-            <span class="block mt-2 text-lg">Quantidade de Horas da Semana {{ $hoursPerWeek }}</span>
-        </h1>
         <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
             <div class="p-4 overflow-x-auto">
                 <!-- Dropdown Button -->
-                <div class="relative">
-                    <button id="dropdownRadioButton"
-                        class="inline-flex items-center text-gray-500 bg-white border border-gray-300 rounded-lg text-sm px-4 py-2 font-medium focus:outline-none hover:bg-gray-100 dark:bg-gray-800 dark:text-white dark:border-gray-600 dark:hover:bg-gray-700 dark:focus:ring-gray-700 focus:ring-4 focus:ring-gray-100 transition"
-                        type="button">
-                        <svg class="w-4 h-4 text-gray-500 dark:text-gray-400 mr-2" aria-hidden="true"
-                            xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-                            <path
-                                d="M10 0a10 10 0 1 0 10 10A10.011 10.011 0 0 0 10 0Zm3.982 13.982a1 1 0 0 1-1.414 0l-3.274-3.274A1.012 1.012 0 0 1 9 10V6a1 1 0 0 1 2 0v3.586l2.982 2.982a1 1 0 0 1 0 1.414Z" />
-                        </svg>
-                        Selecione a data
-                        <svg class="w-3 h-3 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 10 6">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m1 1 4 4 4-4" />
-                        </svg>
-                    </button>
-                    <!-- Dropdown Menu -->
-                    <div id="dropdownRadio"
-                        class="z-50 hidden w-48 bg-white divide-y divide-gray-100 rounded-lg shadow dark:bg-gray-700 dark:divide-gray-600 absolute top-full left-0 mt-2">
-                        <ul class="p-3 space-y-1 text-sm text-gray-700 dark:text-gray-200"
-                            aria-labelledby="dropdownRadioButton">
-                            @foreach (['1d' => 'Último dia', '7d' => 'Últimos 7 dias', '30d' => 'Últimos 30 dias', '1m' => 'Último mês', '1y' => 'Último ano'] as $value => $label)
-                                <li>
-                                    <div class="flex items-center p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600">
-                                        <input id="filter-radio-example-{{ $value }}" type="radio"
-                                            value="{{ $value }}" name="filter-radio"
-                                            class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600">
-                                        <label for="filter-radio-example-{{ $value }}"
-                                            class="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">{{ $label }}</label>
-                                    </div>
-                                </li>
-                            @endforeach
-                        </ul>
+                <form action="{{ route('user.store', $user->id) }}" method="POST"
+                    class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md space-y-4" id="filter-form">
+                    @csrf
+
+                    <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-gray-100 mb-8">Selecionar
+                        Intervalo de Datas</h2>
+
+                    <div id="reportrange"
+                        style="background: #fff; cursor: pointer; padding: 5px 10px; border: 1px solid #ccc; width: 100%">
+                        <i class="fa fa-calendar"></i>&nbsp;
+                        <span></span> <i class="fa fa-caret-down"></i>
                     </div>
-                </div>
+                    {{-- <input type="text" name="daterange" id="daterange"
+                        class="block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="Selecione o intervalo de datas" /> --}}
+
+                    <input type="hidden" name="start-date" id="start-date">
+                    <input type="hidden" name="end-date" id="end-date">
+
+
+                    <button type="submit"
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                        Filtrar
+                    </button>
+                </form>
 
                 <!-- Table -->
                 <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700 mt-6 border-collapse">
@@ -106,8 +215,73 @@
                 </table>
             </div>
         </div>
-
     </div>
+
+    <script>
+        // Dados para o gráfico (passados do controlador)
+        var months = @json($months); // Meses
+        var totalMinutes = @json($totalMinutes); // Total de minutos por mês
+
+        // Criar o gráfico
+        var ctx = document.getElementById('hoursChart').getContext('2d');
+        var chart = new Chart(ctx, {
+            type: 'bar', // Tipo do gráfico: coluna (bar)
+            data: {
+                labels: months, // Rótulos para os meses
+                datasets: [{
+                    label: 'Horas Trabalhadas',
+                    data: totalMinutes, // Usando minutos como dados numéricos
+                    backgroundColor: '#4C9AFF', // Cor azul para as colunas
+                    borderColor: '#3182CE', // Cor de borda das colunas
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            // Callback para formatar os ticks do eixo Y
+                            callback: function(value) {
+                                var hours = Math.floor(value / 60);
+                                var minutes = value % 60;
+                                return hours + 'h ' + (minutes < 10 ? '0' : '') + minutes +
+                                    'm'; // Exibir como "Xh Ym"
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    tooltip: {
+                        callbacks: {
+                            // Formatar os valores exibidos no tooltip
+                            label: function(context) {
+                                var value = context.raw; // Valor original
+                                var hours = Math.floor(value / 60);
+                                var minutes = value % 60;
+                                return hours + 'h ' + (minutes < 10 ? '0' : '') + minutes +
+                                    'm'; // Exibir como "Xh Ym"
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+
+
+    <!-- SweetAlert2 Script -->
+    <script>
+        @if (session('success'))
+            Swal.fire({
+                icon: 'success',
+                title: 'Imagem de Perfil Atualizada!',
+                text: '{{ session('success') }}',
+                confirmButtonText: 'Ok'
+            });
+        @endif
+    </script>
 
     <script>
         $(document).ready(function() {
@@ -134,6 +308,51 @@
                     dropdown.addClass('hidden');
                 }
             });
+        });
+    </script>
+
+    <script>
+        jQuery.noConflict();
+        jQuery(function($) {
+            // Inicializa o DateRangePicker para o reportrange
+            var start = moment().subtract(29, 'days');
+            var end = moment();
+
+            function cb(start, end) {
+                $('#reportrange span').html(start.format('MMMM D, YYYY') + ' - ' + end.format('MMMM D, YYYY'));
+                $('#start-date').val(start.format('YYYY-MM-DD'));
+                $('#end-date').val(end.format('YYYY-MM-DD'));
+            }
+
+            $('#reportrange').daterangepicker({
+                startDate: start,
+                endDate: end,
+                locale: {
+                    format: 'MMMM D, YYYY',
+                    applyLabel: 'Aplicar',
+                    cancelLabel: 'Cancelar',
+                    fromLabel: 'De',
+                    toLabel: 'Até',
+                    daysOfWeek: ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'],
+                    monthNames: [
+                        'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                        'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                    ],
+                    firstDay: 0
+                },
+                ranges: {
+                    'Hoje': [moment(), moment()],
+                    'Ontem': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Últimos 7 Dias': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 Dias': [moment().subtract(29, 'days'), moment()],
+                    'Este Mês': [moment().startOf('month'), moment().endOf('month')],
+                    'Último Mês': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1,
+                        'month').endOf('month')]
+                },
+
+            }, cb);
+
+            cb(start, end);
         });
     </script>
 

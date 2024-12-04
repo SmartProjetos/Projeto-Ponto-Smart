@@ -16,10 +16,7 @@
                                 class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
                                 User
                             </th>
-                            <th
-                                class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
-                                Email
-                            </th>
+
                             <th
                                 class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-200 uppercase tracking-wider">
                                 Horas Trabalhadas na Semana
@@ -46,10 +43,6 @@
                                 <td
                                     class="px-6 py-4 whitespace-nowrap text-xl text-gray-500 dark:text-gray-200 text-truncate">
                                     {{ $item->name }}
-                                </td>
-                                <td
-                                    class="px-6 py-4 whitespace-nowrap text-xl text-gray-500 dark:text-gray-200 text-truncate">
-                                    {{ $item->email }}
                                 </td>
                                 <td
                                     class="px-6 py-4 whitespace-nowrap text-center text-xl text-gray-500 dark:text-gray-200 text-truncate">
