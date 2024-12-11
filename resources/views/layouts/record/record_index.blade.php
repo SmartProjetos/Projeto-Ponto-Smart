@@ -176,7 +176,7 @@
     <script>
         jQuery.noConflict();
         jQuery(function($) {
-                        // Inicializa o DateRangePicker para o reportrange
+            // Inicializa o DateRangePicker para o reportrange
             var start = moment().subtract(29, 'days');
             var end = moment();
 
@@ -271,7 +271,18 @@
 
     <script>
         var days = @json($days); // Dias da semana
-        var hoursByDay = @json($hoursByDay); // Horas em formato decimal
+        var minutesByDay = @json($minutesByDay); // Minutos totais
+        console.log(minutesByDay);
+
+        // Função para converter minutos para o formato hh:mm
+        function formatMinutesToHHMM(minutes) {
+            let hours = Math.floor(minutes / 60);
+            let remainingMinutes = minutes % 60;
+            return hours.toString().padStart(2, '0') + ':' + remainingMinutes.toString().padStart(2, '0');
+        }
+
+        // Convertendo os minutos para hh:mm
+        var hoursFormatted = minutesByDay.map(formatMinutesToHHMM);
 
         var ctx = document.getElementById('weeklyHoursChart').getContext('2d');
 
@@ -280,8 +291,8 @@
             data: {
                 labels: days,
                 datasets: [{
-                    label: 'Horas Trabalhadas',
-                    data: hoursByDay,
+                    label: 'Tempo Trabalhado (hh:mm)',
+                    data: minutesByDay, // Mantém os minutos para facilitar escalas no gráfico
                     backgroundColor: 'rgba(76, 154, 255, 0.2)',
                     borderColor: '#4C9AFF',
                     borderWidth: 2,
@@ -306,7 +317,8 @@
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return context.raw.toFixed(2) + ' horas';
+                                let rawMinutes = context.raw; // Valor original em minutos
+                                return formatMinutesToHHMM(rawMinutes) + ' (hh:mm)';
                             }
                         }
                     }
@@ -316,7 +328,7 @@
                         beginAtZero: true,
                         title: {
                             display: true,
-                            text: 'Horas',
+                            text: 'Tempo Trabalhado (Minutos)',
                             font: {
                                 size: 14 // Tamanho da fonte do título
                             }
@@ -326,7 +338,7 @@
                                 size: 12 // Tamanho da fonte dos ticks
                             },
                             callback: function(value) {
-                                return value + 'h'; // Formato "Xh"
+                                return formatMinutesToHHMM(value); // Mostrar como hh:mm
                             }
                         }
                     },

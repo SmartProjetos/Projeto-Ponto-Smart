@@ -36,47 +36,44 @@ class RecordController extends Controller
         });
 
         // Dados para gráfico (opcional)
-        $graphData = $this->getWeeklyGraphData($user->id);
+        $graphData = $this->getWeeklyGraphData($user->id, $startDate, $endDate);
 
         return view('layouts.record.record_index', [
             'user' => $user,
             'groupedRecords' => $groupedRecords,
             'hoursPerWeek' => ControllerHoursPerWeek::getHoursPerWeekByUser($user->id),
             'days' => $graphData['days'],
-            'hoursByDay' => $graphData['hoursByDay'],
+            'minutesByDay' => $graphData['minutesByDay'],
         ]);
     }
 
 
     /**
-     * Gera dados para o gráfico semanal.
+     * Gera dados para o gráfico semanal em minutos.
      */
-    private function getWeeklyGraphData(int $userId): array
+    private function getWeeklyGraphData(int $userId, $startOfWeek, $endOfWeek): array
     {
-        $startOfWeek = Carbon::now()->startOfWeek();
-        $endOfWeek = Carbon::now()->endOfWeek();
-
         $dailyData = Record::where('user_id', $userId)
             ->whereBetween('date', [$startOfWeek, $endOfWeek])
-            ->selectRaw('DATE(date) as day, SEC_TO_TIME(SUM(TIME_TO_SEC(total_hours))) as total_hours')
+            ->selectRaw('DATE(date) as day, SUM(TIME_TO_SEC(total_hours)) / 60 as total_minutes')
             ->groupBy('day')
             ->orderBy('day')
             ->get();
 
         $days = [];
-        $hoursByDay = [];
+        $minutesByDay = [];
 
         foreach ($dailyData as $data) {
-            // Verifica se o campo 'day' não está vazio e se 'total_hours' não está vazio
-            if (!empty($data->day) && !empty($data->total_hours)) {
+            // Verifica se o campo 'day' não está vazio e se 'total_minutes' não está vazio
+            if (!empty($data->day) && !empty($data->total_minutes)) {
                 $days[] = Carbon::parse($data->day)->format('d/m');
-                $timeParts = explode(':', $data->total_hours);
-                $hoursByDay[] = (int)$timeParts[0] + ((int)$timeParts[1] / 60); // Horas em decimal
+                $minutesByDay[] = (int)$data->total_minutes; // Minutos totais
             }
         }
 
-        return ['days' => $days, 'hoursByDay' => $hoursByDay];
+        return ['days' => $days, 'minutesByDay' => $minutesByDay];
     }
+
 
 
     public function create()
